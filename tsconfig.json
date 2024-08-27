@@ -5,6 +5,8 @@
     "skipLibCheck": true,
     "strict": true,
     "noEmit": true,
+    "typeRoots": ["node_modules/@types"],
+    "types": ["node"],
     "esModuleInterop": true,
     "module": "esnext",
     "moduleResolution": "bundler",
@@ -24,3 +26,4 @@
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
   "exclude": ["node_modules"]
 }
+

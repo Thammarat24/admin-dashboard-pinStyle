@@ -1,8 +1,8 @@
 "use client";
+
 import React, { useState } from 'react';
 import Image from 'next/image';
 import axios from 'axios';
-
 
 const AddProductForm = () => {
   const [file, setFile] = useState(null);
@@ -15,8 +15,8 @@ const AddProductForm = () => {
 
   const uploadFile = async (file) => {
     const formData = new FormData();
-   formData.append('image', image); 
-  
+    formData.append('file', file); // Ensure the key here matches what the backend expects
+    
     try {
       const response = await axios.post('/api/upload', formData, {
         headers: {
@@ -53,7 +53,7 @@ const AddProductForm = () => {
     };
 
     try {
-      const response = await axios.post('/api/products/add', productData);
+      await axios.post('/api/products/add', productData);
       alert('Product added successfully!');
       // Reset form
       setName('');
