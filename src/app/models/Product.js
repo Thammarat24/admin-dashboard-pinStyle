@@ -1,6 +1,6 @@
 // src/models/Product.js
 import { DataTypes } from 'sequelize';
-import sequelize from '../config/sequelize'; // ปรับเส้นทางตามความเหมาะสม
+import sequelize from '../config/sequelize'; // Adjust the path as necessary
 
 const Product = sequelize.define('product', {
   id: {
@@ -23,7 +23,12 @@ const Product = sequelize.define('product', {
   },
   imageUrl: {
     type: DataTypes.STRING,
-    allowNull: true
+    allowNull: true,
+    get() {
+      // Prepend base URL to imageUrl
+      const imageUrl = this.getDataValue('imageUrl');
+      return imageUrl ? `${process.env.BASE_URL}/images/${imageUrl}` : null;
+    }
   },
   categoryId: {
     type: DataTypes.INTEGER,
