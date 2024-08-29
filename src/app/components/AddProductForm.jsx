@@ -12,6 +12,7 @@ const AddProductForm = () => {
   const [price, setPrice] = useState('');
   const [categoryId, setCategoryId] = useState('');
   const [isFeatured, setIsFeatured] = useState(false);
+  const [stock, setStock] = useState('');
 
   const uploadFile = async (file) => {
     const formData = new FormData();
@@ -49,6 +50,7 @@ const AddProductForm = () => {
       price,
       categoryId,
       isFeatured,
+      stock,
       imageUrl
     };
 
@@ -63,6 +65,7 @@ const AddProductForm = () => {
       setIsFeatured(false);
       setFile(null);
       setFileUrl('');
+      setStock('')
     } catch (error) {
       console.error('Error adding product:', error.response?.data || error.message);
       alert('Error adding product');
@@ -108,6 +111,16 @@ const AddProductForm = () => {
             type="number"
             value={categoryId}
             onChange={(e) => setCategoryId(e.target.value)}
+            required
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Stock:</label>
+          <input
+            type="number"
+            value={stock}
+            onChange={(e) => setStock(e.target.value)}
             required
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           />

@@ -21,6 +21,11 @@ const Product = sequelize.define('product', {
     type: DataTypes.DECIMAL(10, 2),
     allowNull: false
   },
+  stock: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    defaultValue: 1 // หรือกำหนดค่าเริ่มต้นที่เหมาะสม
+  },
   imageUrl: {
     type: DataTypes.STRING,
     allowNull: true,

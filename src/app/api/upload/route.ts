@@ -1,38 +1,51 @@
 import { NextRequest, NextResponse } from "next/server";
-import path from "path";
-import fs from "fs";
+import { v2 as cloudinary, UploadApiResponse } from "cloudinary";
 
-const UPLOAD_DIR = path.resolve(process.env.ROOT_PATH ?? "", "public/uploads");
+// ตั้งค่า Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME!,
+  api_key: process.env.CLOUDINARY_API_KEY!,
+  api_secret: process.env.CLOUDINARY_API_SECRET!,
+});
 
 export const POST = async (req: NextRequest) => {
   const formData = await req.formData();
-  const file = formData.get("file") as File;
+  const file = formData.get("file") as File | null;
 
-  // ตรวจสอบการอัปโหลดไฟล์
   if (file) {
-    const buffer = Buffer.from(await file.arrayBuffer());
-
-    const UPLOAD_DIR = "public/uploads";
-    const filePath = path.resolve(UPLOAD_DIR, file.name);
     try {
-      fs.writeFileSync(filePath, buffer);
+      const buffer = Buffer.from(await file.arrayBuffer());
+
+      const result = await new Promise<UploadApiResponse>((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+          { resource_type: "auto" },
+          (error, result) => {
+            if (error) {
+              reject(error);
+            } else {
+              resolve(result as UploadApiResponse);
+            }
+          }
+        );
+        uploadStream.end(buffer);
+      });
+
+      return NextResponse.json({
+        success: true,
+        name: file.name,
+        fileUrl: result.secure_url, // URL ของไฟล์ที่อัปโหลดไปยัง Cloudinary
+      }, { status: 200 });
     } catch (error) {
-      console.error("เกิดข้อผิดพลาดในการเขียนไฟล์:", error);
+      console.error("เกิดข้อผิดพลาดในการอัปโหลดไฟล์:", error);
       return NextResponse.json({
         success: false,
-        message: "ข้อผิดพลาดในการเขียนไฟล์",
-      });
+        message: "ข้อผิดพลาดในการอัปโหลดไฟล์",
+      }, { status: 500 });
     }
-
-    return NextResponse.json({
-      success: true,
-      name: file.name,
-      fileUrl: `/uploads/${file.name}`, // สมมุติว่าไฟล์สามารถให้บริการได้จากไดเรกทอรี 'public/uploads'
-    });
   } else {
     return NextResponse.json({
       success: false,
       message: "ไม่มีไฟล์ที่อัปโหลด",
-    });
+    }, { status: 400 });
   }
 };
